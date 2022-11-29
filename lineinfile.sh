@@ -58,7 +58,7 @@ function error(){
 function debug(){
     if [[ $DEBUG -eq 1 ]];
     then
-        echo -e "$( $DATECMD "+%Y-%m-%d %H-%M-%S")  $*" >&2
+        echo -e "$( $DATECMD "+%Y-%m-%d %H-%M-%S") $BASH_LINENO $*" >&2
     fi
     return 0 
 }
@@ -66,7 +66,7 @@ function debug(){
 function usage(){
 /bin/cat <<'EOF'
        Disclaimer 
-           Don't use this in production. Don't use this with unvalidated input. This is not secure code. This is shell scripting. 
+           Don't use this in production! Don't use this with unvalidated input! This is not secure code. This is shell scripting! 
            
        Necesary parameters
         --regexp="pattern"                                            # a regex matching a pattern in the line we are looking for
@@ -83,6 +83,8 @@ function usage(){
         --create                  # if the file does not exist, should it be created
         --backup                  # make a backup first
         --quiet                   # no output only return codes
+        --debug                   # very noisy output
+        --trace                   # even then debug more noisy
 
        return codes  0 for success 1 for failure
 
@@ -299,6 +301,10 @@ do
             debug)
                 DEBUG=1
                 debug "DEBUG=1"
+                ;;
+            trace)
+                TRACE=1
+                debug "TRACE=1"
                 ;;
             regexp)
                 REGEXP="${ARGUMENT:7}"
