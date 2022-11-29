@@ -9,41 +9,43 @@ One command to add/change/remove a "line" in a config file. Useful for scripting
 * Just for the fun. 
 
 # examples
-lineinfile.sh --help
+* lineinfile.sh --help
 ```
-       Disclaimer 
-           Don't use this in production. Don't use this with unvalidated input. This is not secure code. This is shell scripting. 
-           
-       Necesary parameters
-        --regexp="pattern"                                            # a regex matching a pattern in the line we are looking for
-        --line="TEXT"                                                 # the text the line is replaced with
-        --path="./filename.txt" || ./filename || /var/www/index.html  # the file lineinfile is supposed to edit. Without "--path" everything that is not a parameter is assumed to be a file.
+Disclaimer 
+    Don't use this in production. Don't use this with unvalidated input. This is not secure code. This is shell scripting. 
+    
+Necesary parameters
+    --regexp="pattern"                                            # a regex matching a pattern in the line we are looking for
+    --line="TEXT"                                                 # the text the line is replaced with
+    --path="./filename.txt" || ./filename || /var/www/index.html  # the file lineinfile is supposed to edit. Without "--path" everything that is not a parameter is assumed to be a file.
 
-       dependend
-        --line="TEXT"             # the text the line is replaced with, except when state=absent
-        --state="absent|present"  # should the line matching regexp be removed, should the line be present
+dependend
+    --line="TEXT"             # the text the line is replaced with, except when state=absent
+    --state="absent|present"  # should the line matching regexp be removed, should the line be present
 
-       Optionl parameters
-        --insertafter="EOF"       # EOF|BOF|regex - Insert After regex pattern, after EndOfFile (EOF) or after BeginOfFile (BOF)
-        --insertbefore="EOF"      # EOF|BOF|regex - Insert Before regex pattern, before EndOfFile (EOF) or  before BeginOfFile (BOF)
-        --create                  # if the file does not exist, should it be created
-        --backup                  # make a backup first
-        --quiet                   # no output only return codes
+Optionl parameters
+    --insertafter="EOF"       # EOF|BOF|regex - Insert After regex pattern, after EndOfFile (EOF) or after BeginOfFile (BOF)
+    --insertbefore="EOF"      # EOF|BOF|regex - Insert Before regex pattern, before EndOfFile (EOF) or  before BeginOfFile (BOF)
+    --create                  # if the file does not exist, should it be created
+    --backup                  # make a backup first
+    --quiet                   # no output only return codes
+    --debug                   # very noisy output
+    --trace                   # even more noise
 
-       return codes  0 for success 1 for failure
+return codes  0 for success 1 for failure
 
-       example1:
-        lineinfile --regexp="^LAST=.*" --state=absent  /etc/defaults/automysqlbackup
-        lineinfile --backup --regexp="PasswordAuthentication" --line="LAST=TRUE" --path=/etc/defaults/automysqlbackup
-        lineinfile --dryrun --firstmatch --regexp="PasswordAuthentication" --line="PasswordAuthentication without-password" --insertbefore=EOF  --state=present  /etc/ssh/sshd_config
+example1:
+    lineinfile --regexp="^LAST=.*" --state=absent  /etc/defaults/automysqlbackup
+    lineinfile --backup --regexp="PasswordAuthentication" --line="LAST=TRUE" --path=/etc/defaults/automysqlbackup
+    lineinfile --dryrun --firstmatch --regexp="PasswordAuthentication" --line="PasswordAuthentication without-password" --insertbefore=EOF  --state=present  /etc/ssh/sshd_config
 
-       lineinfile                         \
-          regexp="^LAST.*"                \
-          line="LAST=TRUE"                \
-          path=/etc/defaults/automysqlbackup
+    lineinfile                         \
+        regexp="^LAST.*"                \
+        line="LAST=TRUE"                \
+        path=/etc/defaults/automysqlbackup
 ```
 
-lineinfile  --firstmatch  --regexp="PasswordAuthentication" --line="#PasswordAuthentication yes"  --state=present  /etc/ssh/sshd_config 
+* lineinfile  --firstmatch  --regexp="PasswordAuthentication" --line="#PasswordAuthentication yes"  --state=present  /etc/ssh/sshd_config 
 ```
 Filename: '/etc/ssh/sshd_config'
 Line found
@@ -58,7 +60,7 @@ $ echo "$?"
 
 ```
 
-lineinfile --backup --firstmatch --regexp="PasswordAuthentication" --line="PasswordAuthentication without-password" --insertbefore="ForceCommand cvs server" /etc/ssh/sshd_config
+* lineinfile --backup --firstmatch --regexp="PasswordAuthentication" --line="PasswordAuthentication without-password" --insertbefore="ForceCommand cvs server" /etc/ssh/sshd_config
 ```
 Backup file -/etc/ssh/sshd_config- to -/etc/ssh/sshd_config.2022-11-29T16:37:39+01:00-
 Filename: '/etc/ssh/sshd_config'
@@ -77,7 +79,7 @@ after
   60-
 ```
 
-lineinfile --firstmatch --regexp="PasswordAuthentication" --line="PasswordAuthentication no"  /etc/ssh/sshd_config
+* lineinfile --firstmatch --regexp="PasswordAuthentication" --line="PasswordAuthentication no"  /etc/ssh/sshd_config
 ```
 Filename: 'sshd_config'
 before
@@ -96,7 +98,7 @@ after
 
 ```
 
-lineinfile  --regexp="PasswordAuthentication no"  --state=absent  /etc/ssh/sshd_config
+* lineinfile  --regexp="PasswordAuthentication no"  --state=absent  /etc/ssh/sshd_config
 ```
 Filename: 'sshd_config'
 Remove the Line
@@ -107,7 +109,7 @@ Remove the Line
   60-
 
 ```
-lineinfile  --regexp="PasswordAuthentication no"  --state=absent  /etc/ssh/sshd_config
+* lineinfile  --regexp="PasswordAuthentication no"  --state=absent  /etc/ssh/sshd_config
 ```
 Nothing to do. Line does not exist
 
@@ -115,7 +117,7 @@ $ echo "$?"
 0
 ```
 
-lineinfile  --firstmatch  --regexp="PasswordAuthentication no"   --state=present   /etc/ssh/sshd_config
+* lineinfile  --firstmatch  --regexp="PasswordAuthentication no"   --state=present   /etc/ssh/sshd_config
 ```
 Line not found. Line is missing.
 
@@ -123,7 +125,7 @@ $ echo "$?"
 1
 ```
 
-lineinfile  --firstmatch  --regexp="PasswordAuthentication" --line="PasswordAuthentication no"  --state=present  --insertbefore="ForceCommand cvs server"  /etc/ssh/sshd_config 
+* lineinfile  --firstmatch  --regexp="PasswordAuthentication" --line="PasswordAuthentication no"  --state=present  --insertbefore="ForceCommand cvs server"  /etc/ssh/sshd_config 
 ```
 Filename: 'sshd_config'
 Insert before at $
@@ -135,7 +137,7 @@ $ echo "$?"
 0
 ```
 
-lineinfile  --firstmatch  --regexp="PasswordAuthentication no"  --state=present   /etc/ssh/sshd_config
+* lineinfile  --firstmatch  --regexp="PasswordAuthentication no"  --state=present   /etc/ssh/sshd_config
 ```
 Line not found. Line is missing.
 
