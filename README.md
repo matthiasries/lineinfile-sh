@@ -1,7 +1,14 @@
 # lineinfile-sh
-One command to add/change/remove a "line" in a config file. Useful for scripting as well.  The goal is to build a bash/busybox compatible version of ansible-lineinfile (originaly writen in python)
+One command to add/change/remove a "line" in a config file. Useful for scripting as well.  The goal is to build a bash/busybox compatible version of ansible-lineinfile (originaly writen in python). It's even in color.
 
+# Why? 
+* I was missing a shell tool like this. 
+* I use embedded systems with only busybox 
+* ansible is not always an option. It's sometimes overkill for one time uses and sometimes even python is to old on legacy systems
+* I want to learn a bit shell scripting
+* Just for the fun. 
 
+# examples
 lineinfile  --firstmatch  --regexp="PasswordAuthentication" --line="#PasswordAuthentication yes"  --state=present  /etc/ssh/sshd_config 
 ```
 Filename: '/etc/ssh/sshd_config'
@@ -17,7 +24,7 @@ $ echo "$?"
 
 ```
 
-lineinfile --backup --firstmatch --regexp="PasswordAuthentication" --line="PasswordAuthentication without-password"  /etc/ssh/sshd_config
+lineinfile --backup --firstmatch --regexp="PasswordAuthentication" --line="PasswordAuthentication without-password" --insertbefore="ForceCommand cvs server" /etc/ssh/sshd_config
 ```
 Backup file -/etc/ssh/sshd_config- to -/etc/ssh/sshd_config.2022-11-29T16:37:39+01:00-
 Filename: '/etc/ssh/sshd_config'
@@ -55,7 +62,7 @@ after
 
 ```
 
-lineinfile  --regexp="PasswordAuthentication"  --state=absent  /etc/ssh/sshd_config
+lineinfile  --regexp="PasswordAuthentication no"  --state=absent  /etc/ssh/sshd_config
 ```
 Filename: 'sshd_config'
 Remove the Line
@@ -66,7 +73,7 @@ Remove the Line
   60-
 
 ```
-lineinfile  --regexp="PasswordAuthentication"  --state=absent  /etc/ssh/sshd_config
+lineinfile  --regexp="PasswordAuthentication no"  --state=absent  /etc/ssh/sshd_config
 ```
 Nothing to do. Line does not exist
 
@@ -74,7 +81,7 @@ $ echo "$?"
 0
 ```
 
-lineinfile  --firstmatch  --regexp="PasswordAuthentication" --line="#PasswordAuthentication yes"  --state=present   /etc/ssh/sshd_config
+lineinfile  --firstmatch  --regexp="PasswordAuthentication no"   --state=present   /etc/ssh/sshd_config
 ```
 Line not found. Line is missing.
 
@@ -82,14 +89,22 @@ $ echo "$?"
 1
 ```
 
-lineinfile  --firstmatch  --regexp="PasswordAuthentication" --line="PasswordAuthentication yes"  --state=present  --insertbefore=EOF  /etc/ssh/sshd_config 
+lineinfile  --firstmatch  --regexp="PasswordAuthentication" --line="PasswordAuthentication no"  --state=present  --insertbefore="ForceCommand cvs server"  /etc/ssh/sshd_config 
 ```
 Filename: 'sshd_config'
 Insert before at $
  119-   #       PermitTTY no
- 120-   #       ForceCommand cvs server
- 121:   PasswordAuthentication yes
+ 120:   PasswordAuthentication no
+ 120-   #       ForceCommand cvs server   
  
-$ echo "/etc/ssh/sshd_config"
+$ echo "$?"
 0
+```
+
+lineinfile  --firstmatch  --regexp="PasswordAuthentication no"  --state=present   /etc/ssh/sshd_config
+```
+Line not found. Line is missing.
+
+$ echo "$?"
+1
 ```
