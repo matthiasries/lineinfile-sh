@@ -9,6 +9,40 @@ One command to add/change/remove a "line" in a config file. Useful for scripting
 * Just for the fun. 
 
 # examples
+lineinfile.sh --help
+```
+       Disclaimer 
+           Don't use this in production. Don't use this with unvalidated input. This is not secure code. This is shell scripting. 
+           
+       Necesary parameters
+        --regexp="pattern"                                            # a regex matching a pattern in the line we are looking for
+        --line="TEXT"                                                 # the text the line is replaced with
+        --path="./filename.txt" || ./filename || /var/www/index.html  # the file lineinfile is supposed to edit. Without "--path" everything that is not a parameter is assumed to be a file.
+
+       dependend
+        --line="TEXT"             # the text the line is replaced with, except when state=absent
+        --state="absent|present"  # should the line matching regexp be removed, should the line be present
+
+       Optionl parameters
+        --insertafter="EOF"       # EOF|BOF|regex - Insert After regex pattern, after EndOfFile (EOF) or after BeginOfFile (BOF)
+        --insertbefore="EOF"      # EOF|BOF|regex - Insert Before regex pattern, before EndOfFile (EOF) or  before BeginOfFile (BOF)
+        --create                  # if the file does not exist, should it be created
+        --backup                  # make a backup first
+        --quiet                   # no output only return codes
+
+       return codes  0 for success 1 for failure
+
+       example1:
+        lineinfile --regexp="^LAST=.*" --state=absent  /etc/defaults/automysqlbackup
+        lineinfile --backup --regexp="PasswordAuthentication" --line="LAST=TRUE" --path=/etc/defaults/automysqlbackup
+        lineinfile --dryrun --firstmatch --regexp="PasswordAuthentication" --line="PasswordAuthentication without-password" --insertbefore=EOF  --state=present  /etc/ssh/sshd_config
+
+       lineinfile                         \
+          regexp="^LAST.*"                \
+          line="LAST=TRUE"                \
+          path=/etc/defaults/automysqlbackup
+```
+
 lineinfile  --firstmatch  --regexp="PasswordAuthentication" --line="#PasswordAuthentication yes"  --state=present  /etc/ssh/sshd_config 
 ```
 Filename: '/etc/ssh/sshd_config'
